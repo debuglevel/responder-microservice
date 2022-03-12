@@ -23,8 +23,8 @@ data class Response(
     @ManyToOne
     var question: Question,
     @ManyToOne
-    var answer: Answer?,
-    var answeredOn: LocalDateTime?,
+    var answer: Answer? = null,
+    var answeredOn: LocalDateTime? = null,
     @DateCreated
     var createdOn: LocalDateTime = LocalDateTime.now(),
     @DateUpdated

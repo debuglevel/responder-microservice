@@ -9,7 +9,7 @@ import mu.KotlinLogging
 import java.net.URI
 import java.util.*
 
-@Secured(SecurityRule.IS_ANONYMOUS)
+@Secured(SecurityRule.IS_AUTHENTICATED)
 @Controller("/responses")
 @Tag(name = "responses")
 class ResponseController(private val responseService: ResponseService) {
@@ -40,6 +40,7 @@ class ResponseController(private val responseService: ResponseService) {
      * @return A response
      */
     @Get("/{id}")
+    @Secured(SecurityRule.IS_ANONYMOUS)
     fun getOneResponse(id: UUID): HttpResponse<GetResponseResponse> {
         logger.debug("Called getOneResponse($id)")
         return try {
@@ -82,6 +83,7 @@ class ResponseController(private val responseService: ResponseService) {
      * @return The updated response
      */
     @Put("/{id}")
+    @Secured(SecurityRule.IS_ANONYMOUS)
     fun putOneResponse(id: UUID, updateResponseRequest: UpdateResponseRequest): HttpResponse<UpdateResponseResponse> {
         logger.debug("Called putOneResponse($id, $updateResponseRequest)")
 
