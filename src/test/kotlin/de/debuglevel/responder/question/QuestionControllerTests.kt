@@ -1,5 +1,6 @@
 package de.debuglevel.responder.question
 
+import de.debuglevel.responder.AuthenticationUtils
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.assertj.core.api.Assertions
@@ -15,6 +16,8 @@ class QuestionControllerTests {
     @Inject
     lateinit var questionClient: QuestionClient
 
+    val authHeader = AuthenticationUtils.getBasicAuthenticationHeader()
+
     @ParameterizedTest
     @MethodSource("questionProvider")
     fun `add question`(question: Question) {
@@ -22,7 +25,7 @@ class QuestionControllerTests {
         val addQuestionRequest = AddQuestionRequest(question)
 
         // Act
-        val addedQuestion = questionClient.add(addQuestionRequest).block()
+        val addedQuestion = questionClient.add(addQuestionRequest, authHeader).block()
 
         // Assert
         Assertions.assertThat(addedQuestion.title).isEqualTo(question.title)
@@ -34,7 +37,7 @@ class QuestionControllerTests {
     fun `get question`(question: Question) {
         // Arrange
         val addQuestionRequest = AddQuestionRequest(question)
-        val addedQuestion = questionClient.add(addQuestionRequest).block()
+        val addedQuestion = questionClient.add(addQuestionRequest, authHeader).block()
 
         // Act
         val gotQuestion = questionClient.get(addedQuestion.id).block()
@@ -60,11 +63,11 @@ class QuestionControllerTests {
     fun `update question`() {
         // Arrange
         val addQuestionRequest = AddQuestionRequest("Original Name")
-        val addedQuestion = questionClient.add(addQuestionRequest).block()
+        val addedQuestion = questionClient.add(addQuestionRequest, authHeader).block()
         val updateQuestionRequest = UpdateQuestionRequest("Updated Name")
 
         // Act
-        val updatedQuestion = questionClient.update(addedQuestion.id, updateQuestionRequest).block()
+        val updatedQuestion = questionClient.update(addedQuestion.id, updateQuestionRequest, authHeader).block()
         val gotQuestion = questionClient.get(addedQuestion.id).block()
 
         // Assert
@@ -79,7 +82,7 @@ class QuestionControllerTests {
         val updateQuestionRequest = UpdateQuestionRequest("Updated Name")
 
         // Act
-        val updateQuestionResponse = questionClient.update(UUID.randomUUID(), updateQuestionRequest).block()
+        val updateQuestionResponse = questionClient.update(UUID.randomUUID(), updateQuestionRequest, authHeader).block()
 
         // Assert
         Assertions.assertThat(updateQuestionResponse).isNull()
@@ -89,11 +92,11 @@ class QuestionControllerTests {
     fun `get questions`() {
         // Arrange
         questionProvider().forEach {
-            questionClient.add(AddQuestionRequest(it)).block()
+            questionClient.add(AddQuestionRequest(it), authHeader).block()
         }
 
         // Act
-        val gotQuestions = questionClient.getAll()
+        val gotQuestions = questionClient.getAll(authHeader)
 
         // Assert
         Assertions.assertThat(gotQuestions).extracting<String> { x -> x.title }

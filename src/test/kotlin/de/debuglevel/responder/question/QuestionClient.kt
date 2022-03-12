@@ -1,9 +1,6 @@
 package de.debuglevel.responder.question
 
-import io.micronaut.http.annotation.Body
-import io.micronaut.http.annotation.Get
-import io.micronaut.http.annotation.Post
-import io.micronaut.http.annotation.Put
+import io.micronaut.http.annotation.*
 import io.micronaut.http.client.annotation.Client
 import reactor.core.publisher.Mono
 import java.util.*
@@ -16,11 +13,15 @@ interface QuestionClient {
 
     // TODO: Should probably be a reactive Flux<> instead
     @Get("/")
-    fun getAll(): List<GetQuestionResponse>
+    fun getAll(@Header authorization: String): List<GetQuestionResponse>
 
     @Post("/")
-    fun add(@Body question: AddQuestionRequest): Mono<AddQuestionResponse>
+    fun add(@Body question: AddQuestionRequest, @Header authorization: String): Mono<AddQuestionResponse>
 
     @Put("/{id}")
-    fun update(@NotBlank id: UUID, @Body question: UpdateQuestionRequest): Mono<UpdateQuestionResponse>
+    fun update(
+        @NotBlank id: UUID,
+        @Body question: UpdateQuestionRequest,
+        @Header authorization: String
+    ): Mono<UpdateQuestionResponse>
 }
