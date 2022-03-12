@@ -16,7 +16,7 @@ class QuestionControllerTests {
     @Inject
     lateinit var questionClient: QuestionClient
 
-    val authHeader = AuthenticationUtils.getBasicAuthenticationHeader()
+    private val authHeader = AuthenticationUtils.getBasicAuthenticationHeader()
 
     @ParameterizedTest
     @MethodSource("questionProvider")
