@@ -1,12 +1,8 @@
-//package de.debuglevel.responder.answer
-//
-//import de.debuglevel.responder.question.QuestionService
-//import java.util.*
-//
-//data class UpdateAnswerRequest(
-//    val title: String,
-//    val questionId: UUID,
-//) {
+package de.debuglevel.responder.answer
+
+data class UpdateAnswerRequest(
+    val title: String,
+) {
 //    fun toAnswer(questionService: QuestionService): Answer {
 //        return Answer(
 //            id = null,
@@ -14,4 +10,4 @@
 //            question = questionService.get(this.questionId),
 //        )
 //    }
-//}
+}

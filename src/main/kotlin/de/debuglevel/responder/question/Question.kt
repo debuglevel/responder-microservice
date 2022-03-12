@@ -1,14 +1,12 @@
 package de.debuglevel.responder.question
 
+import de.debuglevel.responder.answer.Answer
 import io.micronaut.data.annotation.DateCreated
 import io.micronaut.data.annotation.DateUpdated
 import org.hibernate.annotations.GenericGenerator
 import java.time.LocalDateTime
 import java.util.*
-import javax.persistence.Column
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.Id
+import javax.persistence.*
 
 @Entity
 data class Question(
@@ -21,8 +19,8 @@ data class Question(
     @Column(columnDefinition = "BINARY(16)")
     var id: UUID?,
     var title: String,
-//    @OneToMany(cascade = [CascadeType.ALL])
-//    val answers: Set<Answer> = setOf(),
+    @OneToMany(cascade = [CascadeType.ALL])
+    val answers: Set<Answer> = setOf(),
 //    @OneToMany(cascade = [CascadeType.ALL])
 //    val responses: Set<Response> = setOf(),
     @DateCreated
