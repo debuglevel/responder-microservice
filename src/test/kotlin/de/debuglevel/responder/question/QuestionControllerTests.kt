@@ -62,9 +62,9 @@ class QuestionControllerTests {
     @Test
     fun `update question`() {
         // Arrange
-        val addQuestionRequest = AddQuestionRequest("Original Name")
+        val addQuestionRequest = AddQuestionRequest("Original")
         val addedQuestion = questionClient.add(addQuestionRequest, authHeader).block()
-        val updateQuestionRequest = UpdateQuestionRequest("Updated Name")
+        val updateQuestionRequest = UpdateQuestionRequest("Updated")
 
         // Act
         val updatedQuestion = questionClient.update(addedQuestion.id, updateQuestionRequest, authHeader).block()
@@ -79,7 +79,7 @@ class QuestionControllerTests {
     @Test
     fun `update non-existing question`() {
         // Arrange
-        val updateQuestionRequest = UpdateQuestionRequest("Updated Name")
+        val updateQuestionRequest = UpdateQuestionRequest("Updated")
 
         // Act
         val updateQuestionResponse = questionClient.update(UUID.randomUUID(), updateQuestionRequest, authHeader).block()
