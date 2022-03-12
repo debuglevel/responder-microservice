@@ -1,22 +1,22 @@
-package de.debuglevel.responder.answer
+package de.debuglevel.greeter.person
 
 import java.util.stream.Stream
 
 object TestDataProvider {
-    fun answerProvider() = Stream.of(
-        Answer(
+    fun personProvider() = Stream.of(
+        Person(
             id = null,
             name = "Mozart"
         ),
-        Answer(
+        Person(
             id = null,
             name = "Hänschen"
         ),
-        Answer(
+        Person(
             id = null,
             name = "コハウプト マルク"
         ),
-        Answer(
+        Person(
             id = null,
             name = "Max Mustermann"
         )

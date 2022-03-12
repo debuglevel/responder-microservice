@@ -17,42 +17,73 @@ class QuestionServiceTests {
 
     @ParameterizedTest
     @MethodSource("questionProvider")
-    fun `save question`(question: Question) {
+    fun `add question`(question: Question) {
         // Arrange
 
         // Act
-        val savedQuestion = questionService.add(question)
+        val addedQuestion = questionService.add(question)
 
         // Assert
-        assertThat(savedQuestion).isEqualTo(question)
+        assertThat(addedQuestion).isEqualTo(question)
     }
 
     @ParameterizedTest
     @MethodSource("questionProvider")
-    fun `retrieve question`(question: Question) {
+    fun `get question`(question: Question) {
         // Arrange
-        val savedQuestion = questionService.add(question)
+        val addedQuestion = questionService.add(question)
 
         // Act
-        val retrievedQuestion = questionService.get(savedQuestion.id!!)
+        val gotQuestion = questionService.get(addedQuestion.id!!)
 
         // Assert
-        assertThat(retrievedQuestion).isEqualTo(savedQuestion)
+        assertThat(gotQuestion).isEqualTo(addedQuestion)
+    }
+
+    @ParameterizedTest
+    @MethodSource("questionProvider")
+    fun `question exists`(question: Question) {
+        // Arrange
+        val addedQuestion = questionService.add(question)
+
+        // Act
+        val questionExists = questionService.exists(addedQuestion.id!!)
+
+        // Assert
+        assertThat(questionExists).isTrue
+    }
+
+    @Test
+    fun `count questions`() {
+        val questions = questionProvider().toList()
+
+        val initialQuestionCount = questionService.count
+
+        questions.forEachIndexed { index, question ->
+            // Arrange
+            questionService.add(question)
+
+            // Act
+            val questionCount = questionService.count
+
+            // Assert
+            assertThat(questionCount).isEqualTo(initialQuestionCount + index + 1)
+        }
     }
 
     @Test
     fun `update question`() {
         // Arrange
         val question = Question(null, "Test")
-        val savedQuestion = questionService.add(question)
+        val addedQuestion = questionService.add(question)
 
         // Act
-        val retrievedQuestion = questionService.get(savedQuestion.id!!)
-        retrievedQuestion.name = "Test updated"
-        val updatedQuestion = questionService.update(retrievedQuestion.id!!, retrievedQuestion)
+        val gotQuestion = questionService.get(addedQuestion.id!!)
+        gotQuestion.title = "Test updated"
+        val updatedQuestion = questionService.update(gotQuestion.id!!, gotQuestion)
 
         // Assert
-        assertThat(updatedQuestion.name).isEqualTo("Test updated")
+        assertThat(updatedQuestion.title).isEqualTo("Test updated")
     }
 
     /**
@@ -62,15 +93,49 @@ class QuestionServiceTests {
     fun `update question with copy()`() {
         // Arrange
         val question = Question(null, "Test")
-        val savedQuestion = questionService.add(question)
+        val addedQuestion = questionService.add(question)
 
         // Act
-        val retrievedQuestion = questionService.get(savedQuestion.id!!)
-        val updateQuestion = retrievedQuestion.copy(name = "Test updated")
+        val gotQuestion = questionService.get(addedQuestion.id!!)
+        val updateQuestion = gotQuestion.copy(title = "Test updated")
         val updatedQuestion = questionService.update(updateQuestion.id!!, updateQuestion)
 
         // Assert
-        assertThat(updatedQuestion.name).isEqualTo("Test updated")
+        assertThat(updatedQuestion.title).isEqualTo("Test updated")
+    }
+
+    @Test
+    fun `delete question`() {
+        // Arrange
+        val question = Question(null, "Test")
+        val addedQuestion = questionService.add(question)
+        val questionCount = questionService.count
+
+        // Act
+        questionService.delete(addedQuestion.id!!)
+        val questionExists = questionService.exists(addedQuestion.id!!)
+        val questionCountAfterDeletion = questionService.count
+
+        // Assert
+        assertThat(questionExists).isFalse
+        assertThat(questionCountAfterDeletion).isEqualTo(questionCount - 1)
+    }
+
+    @Test
+    fun `delete all questions`() {
+        val questions = questionProvider().toList()
+
+        // Arrange
+        for (question in questions) {
+            questionService.add(question)
+        }
+
+        // Act
+        questionService.deleteAll()
+        val questionCountAfterDeletion = questionService.count
+
+        // Assert
+        assertThat(questionCountAfterDeletion).isEqualTo(0)
     }
 
     fun questionProvider() = TestDataProvider.questionProvider()

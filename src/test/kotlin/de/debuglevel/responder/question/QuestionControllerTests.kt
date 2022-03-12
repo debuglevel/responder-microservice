@@ -1,6 +1,5 @@
 package de.debuglevel.responder.question
 
-import io.micronaut.http.client.exceptions.HttpClientResponseException
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
 import jakarta.inject.Inject
 import org.assertj.core.api.Assertions
@@ -26,8 +25,8 @@ class QuestionControllerTests {
         val addedQuestion = questionClient.add(addQuestionRequest).block()
 
         // Assert
-        Assertions.assertThat(addedQuestion.name).isEqualTo(question.name)
-        Assertions.assertThat(addedQuestion.name).isEqualTo(addQuestionRequest.name)
+        Assertions.assertThat(addedQuestion.title).isEqualTo(question.title)
+        Assertions.assertThat(addedQuestion.title).isEqualTo(addQuestionRequest.title)
     }
 
     @ParameterizedTest
@@ -38,12 +37,12 @@ class QuestionControllerTests {
         val addedQuestion = questionClient.add(addQuestionRequest).block()
 
         // Act
-        val getQuestion = questionClient.get(addedQuestion.id).block()
+        val gotQuestion = questionClient.get(addedQuestion.id).block()
 
         // Assert
-        Assertions.assertThat(getQuestion.id).isEqualTo(addedQuestion.id)
-        Assertions.assertThat(getQuestion.name).isEqualTo(question.name)
-        Assertions.assertThat(getQuestion.name).isEqualTo(addedQuestion.name)
+        Assertions.assertThat(gotQuestion.id).isEqualTo(addedQuestion.id)
+        Assertions.assertThat(gotQuestion.title).isEqualTo(question.title)
+        Assertions.assertThat(gotQuestion.title).isEqualTo(addedQuestion.title)
     }
 
     @Test
@@ -66,12 +65,12 @@ class QuestionControllerTests {
 
         // Act
         val updatedQuestion = questionClient.update(addedQuestion.id, updateQuestionRequest).block()
-        val getQuestion = questionClient.get(addedQuestion.id).block()
+        val gotQuestion = questionClient.get(addedQuestion.id).block()
 
         // Assert
         Assertions.assertThat(updatedQuestion.id).isEqualTo(addedQuestion.id)
-        Assertions.assertThat(getQuestion.id).isEqualTo(addedQuestion.id)
-        Assertions.assertThat(updatedQuestion.name).isEqualTo(updateQuestionRequest.name)
+        Assertions.assertThat(gotQuestion.id).isEqualTo(addedQuestion.id)
+        Assertions.assertThat(updatedQuestion.title).isEqualTo(updateQuestionRequest.title)
     }
 
     @Test
@@ -80,59 +79,25 @@ class QuestionControllerTests {
         val updateQuestionRequest = UpdateQuestionRequest("Updated Name")
 
         // Act
-        val getQuestionResponse = questionClient.update(UUID.randomUUID(), updateQuestionRequest).block()
+        val updateQuestionResponse = questionClient.update(UUID.randomUUID(), updateQuestionRequest).block()
 
         // Assert
-        Assertions.assertThat(getQuestionResponse).isNull()
+        Assertions.assertThat(updateQuestionResponse).isNull()
     }
 
     @Test
-    fun `list questions`() {
+    fun `get questions`() {
         // Arrange
         questionProvider().forEach {
             questionClient.add(AddQuestionRequest(it)).block()
         }
 
         // Act
-        val getQuestions = questionClient.list()
+        val gotQuestions = questionClient.getAll()
 
         // Assert
-        Assertions.assertThat(getQuestions).extracting<String> { x -> x.name }
-            .containsAll(questionProvider().map { it.name }.toList())
-    }
-
-    @Test
-    fun `get VIPs`() {
-        // Arrange
-
-        // Act
-        val encodedCredentials =
-            Base64.getEncoder().encodeToString("SECRET_USERNAME:SECRET_PASSWORD".byteInputStream().readBytes())
-        val basicAuthenticationHeader = "Basic $encodedCredentials"
-        val getQuestions = questionClient.getVIPs(basicAuthenticationHeader)
-
-        // Assert
-        Assertions.assertThat(getQuestions).anyMatch { it.name == "Hermione Granger" }
-        Assertions.assertThat(getQuestions).anyMatch { it.name == "Harry Potter" }
-        Assertions.assertThat(getQuestions).anyMatch { it.name == "Ronald Weasley" }
-    }
-
-    @Test
-    fun `fail get VIPs with bad authentication`() {
-        // Arrange
-
-        // Act
-        val encodedCredentials =
-            Base64.getEncoder().encodeToString("SECRET_USERNAME:wrongPassword".byteInputStream().readBytes())
-        val basicAuthenticationHeader = "Basic $encodedCredentials"
-        val thrown = Assertions.catchThrowable {
-            questionClient.getVIPs(basicAuthenticationHeader)
-        }
-
-        // Assert
-        Assertions.assertThat(thrown)
-            .isInstanceOf(HttpClientResponseException::class.java)
-            .hasMessageContaining("Unauthorized")
+        Assertions.assertThat(gotQuestions).extracting<String> { x -> x.title }
+            .containsAll(questionProvider().map { it.title }.toList())
     }
 
     fun questionProvider() = TestDataProvider.questionProvider()

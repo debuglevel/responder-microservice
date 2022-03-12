@@ -6,19 +6,11 @@ object TestDataProvider {
     fun questionProvider() = Stream.of(
         Question(
             id = null,
-            name = "Mozart"
+            title = "How are you?"
         ),
         Question(
             id = null,
-            name = "Hänschen"
+            title = "Do you want to participate?"
         ),
-        Question(
-            id = null,
-            name = "コハウプト マルク"
-        ),
-        Question(
-            id = null,
-            name = "Max Mustermann"
-        )
     )
 }
