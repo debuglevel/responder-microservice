@@ -11,8 +11,6 @@ import kotlin.concurrent.thread
 @Singleton
 class PersonService(
     private val personRepository: PersonRepository,
-    private val personGeneratorService: PersonGeneratorService,
-    private val personProperties: PersonProperties,
 ) {
     private val logger = KotlinLogging.logger {}
 
