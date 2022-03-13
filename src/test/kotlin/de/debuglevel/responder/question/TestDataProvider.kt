@@ -3,14 +3,20 @@ package de.debuglevel.responder.question
 import java.util.stream.Stream
 
 object TestDataProvider {
-    fun questionProvider() = Stream.of(
-        Question(
+    val howAreYouQuestion: Question
+        get() = Question(
             id = null,
             title = "How are you?"
-        ),
-        Question(
+        )
+
+    val participateQuestion: Question
+        get() = Question(
             id = null,
             title = "Do you want to participate?"
-        ),
+        )
+
+    fun questionProvider() = Stream.of(
+        howAreYouQuestion,
+        participateQuestion,
     )
 }
