@@ -90,7 +90,8 @@ class QuestionService(
         logger.debug { "Deleting all questions..." }
 
         val countBefore = questionRepository.count()
-        questionRepository.deleteAll() // CAVEAT: does not delete dependent entities; use this instead: questionRepository.findAll().forEach { questionRepository.delete(it) }
+        //questionRepository.deleteAll() // CAVEAT: does not delete dependent entities; use this instead: questionRepository.findAll().forEach { questionRepository.delete(it) }
+        questionRepository.findAll().forEach { questionRepository.delete(it) }
         val countAfter = questionRepository.count()
         val countDeleted = countBefore - countAfter
 
